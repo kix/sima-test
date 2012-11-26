@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table()
  * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks()
  */
 class Task
 {
@@ -31,7 +32,7 @@ class Task
     /**
      * @var \DateTime $completedOn
      *
-     * @ORM\Column(name="completedOn", type="datetime")
+     * @ORM\Column(name="completedOn", type="datetime", nullable=true)
      */
     private $completedOn;
 
@@ -49,6 +50,13 @@ class Task
      */
     private $description;
 
+    /**
+     * Creation date defaults to now
+     */
+    public function __construct()
+    {
+        $this->setAddedOn(new \DateTime());
+    }
 
     /**
      * Get id
@@ -84,16 +92,11 @@ class Task
     }
 
     /**
-     * Set completedOn
-     *
-     * @param \DateTime $completedOn
-     * @return Task
+     * Complete a task
      */
-    public function setCompletedOn($completedOn)
+    public function complete()
     {
-        $this->completedOn = $completedOn;
-    
-        return $this;
+        $this->completedOn = new \DateTime();
     }
 
     /**

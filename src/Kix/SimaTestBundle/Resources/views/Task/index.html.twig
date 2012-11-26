@@ -1,28 +1,38 @@
+{% extends 'KixSimaTestBundle::layout.html.twig' %}
+{% block content %}
 <h1>Task list</h1>
 
 <table class="records_list">
     <thead>
         <tr>
             <th>Id</th>
-            <th>Addedon</th>
-            <th>Completedon</th>
-            <th>Dueon</th>
+            <th>Added on</th>
+            <th>Completed on</th>
+            <th>Due on</th>
             <th>Description</th>
             <th>Actions</th>
         </tr>
     </thead>
     <tbody>
     {% for entity in entities %}
-        <tr>
+        <tr class="task" data-id="{{ entity.id }}">
             <td><a href="{{ path('task_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
             <td>{% if entity.addedOn %}{{ entity.addedOn|date('Y-m-d H:i:s') }}{% endif %}</td>
-            <td>{% if entity.completedOn %}{{ entity.completedOn|date('Y-m-d H:i:s') }}{% endif %}</td>
+            <td class="complete-date">{% if entity.completedOn %}{{ entity.completedOn|date('Y-m-d H:i:s') }}{% endif %}</td>
             <td>{% if entity.dueOn %}{{ entity.dueOn|date('Y-m-d H:i:s') }}{% endif %}</td>
             <td>{{ entity.description }}</td>
             <td>
                 <ul>
+                    {% if not entity.completedOn %}
+                    <li>
+                        <a class="ajax" href="{{ path('task_complete', { 'id': entity.id }) }}">complete</a>
+                    </li>
+                    {% endif %}
                     <li>
                         <a href="{{ path('task_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('task_delete', { 'id': entity.id }) }}">delete</a>
                     </li>
                     <li>
                         <a href="{{ path('task_edit', { 'id': entity.id }) }}">edit</a>
@@ -41,3 +51,4 @@
         </a>
     </li>
 </ul>
+{% endblock %}

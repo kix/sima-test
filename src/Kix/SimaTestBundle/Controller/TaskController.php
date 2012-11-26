@@ -189,6 +189,36 @@ class TaskController extends Controller
         return $this->redirect($this->generateUrl('task'));
     }
 
+    /**
+     * Marks a task complete
+     *
+     * @Route("/{id}/complete", name="task_complete")
+     * @Method("GET")
+     */
+    public function completeAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('KixSimaTestBundle:Task')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Task entity.');
+        }
+
+        $entity->complete();
+
+        $em->persist($entity);
+        $em->flush();
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            return new \Symfony\Component\HttpFoundation\Response(json_encode(array(
+                'id'=> $entity->getId(),
+                'date' => $entity->getCompletedOn()->format('Y-m-d H:i:s'),
+            )));
+        } else {
+            return $this->redirect($this->generateUrl('task'));
+        }
+    }
+
     private function createDeleteForm($id)
     {
         return $this->createFormBuilder(array('id' => $id))
